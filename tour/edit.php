@@ -1,24 +1,27 @@
+
 <?php
-	session_start();
-	if(isset($_POST['edit'])){
-		$tours = simplexml_load_file('files/tour.xml');
-		foreach($tours->tour as $tour){
-			if($tour->id == $_POST['id']){
-				$tour->title = $_POST['title'];
-				$tour->author = $_POST['author'];
-				$tour->date = $_POST['date'];
-				$tour->content = $_POST['content'];
-				break;
-			}
-		}
- 
-		file_put_contents('files/tour.xml', $tours->asXML());
-		$_SESSION['message'] = 'Member updated successfully';
-		header('location: index.php');
+	
+	include 'conn.php';
+
+	
+	if(isset($_REQUEST['edit'])){
+		$ID = $_POST['id'];
+		$TITLE = $_POST['title'];
+		$AUTHOR = $_POST['author'];
+		$DATE = $_POST['date'];
+		$CONTENT = $_POST['content'];
+		$IMAGE = $_FILES['image'];
+		// print_r($_FILES['image']);
+		$img_loc =$_FILES['image']['tmp_name'];
+		$img_name = $_FILES['image']['name'];
+		$img_destination = "files".$img_name;
+		move_uploaded_file($img_loc,'files/'.$img_name);
+
+
+		mysqli_query($con, "UPDATE `tour_table`(`id`, `title`, `author`, `date`, `content`, `image`) VALUES ('$ID','$TITLE','$AUTHOR','$DATE','$CONTENT','$img_destination')");
 	}
-	else{
-		$_SESSION['message'] = 'Select member to edit first';
-		header('location: index.php');
-	}
- 
+
+	header('location: index.php');
+
+
 ?>

@@ -1,5 +1,7 @@
 <?php include "add_modal.php"; ?>
 
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,9 +18,10 @@
         <div class="col-sm-8 col-sm-offset-2">
             <a href="#addnew" class="btn btn-primary" data-toggle="modal"><span class="glyphicon glyphicon-level-up"></span> New Content</a>
 
-            <a href="" class="btn btn-dark" target="_blank " ><span class="glyphicon glyphicon-th-list"></span> View Website</a>
+            <a href="main-page/web.php" class="btn btn-dark" target="_blank " ><span class="glyphicon glyphicon-th-list"></span> View Website</a>
             <?php 
                 session_start();
+                
                 if(isset($_SESSION['message'])){
                     ?>
                     <div class="alert alert-info text-center" style="margin-top:20px;">
@@ -36,30 +39,29 @@
                     <th scope="col">Author</th>
                     <th scope="col">Date Published</th>
                     <th scope="col">Content</th>
+                    <th scope="col">Image</th>
                     <th scope="col">Action</th>
                 </thead>
                 <tbody>
                     <?php
-                    //load xml file
-                    $file = simplexml_load_file('files/tour.xml');
- 
-                    foreach($file->tour as $row){
-                        ?>
-                        <tr class="table-info">
-                            <td><?php echo $row->id; ?></td>
-                            <td><?php echo $row->title; ?></td>
-                            <td><?php echo $row->author; ?></td>
-                            <td><?php echo $row->date; ?></td>
-                            <td><?php echo $row->content; ?></td>
-                            <td>
-                                <a href="#edit_<?php echo $row->id; ?>"data-toggle="modal" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-                                <a href="#delete_<?php echo $row->id; ?>" data-toggle="modal" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> Delete</a>
+                    include 'conn.php';
+
+                    $pic = mysqli_query($con,"SELECT * FROM `tour_table`");
+                    while($row = mysqli_fetch_array($pic)){
+                     echo "
+                        <tr>
+                            <td>$row[id]</td>
+                            <td>$row[title]</td>
+                            <td>$row[author]</td>
+                            <td>$row[date]</td>
+                            <td>$row[content]</td>
+                            <td><img src='$row[image]' width='200px' height='80px'></td>
+                            <td><a href='edit.php? id=$row[id]'data-toggle='modal' class='btn btn-success btn-sm'><span class='glyphicon glyphicon-edit'></span>Edit</a>
+                                <a href='delete.php? id=$row[id]'data-toggle='modal' class='btn btn-danger btn-sm'><span class='glyphicon glyphicon-trash'></span>Delete</a>
                             </td>
-                            <?php include('edit_delete_modal.php'); ?>
                         </tr>
-                        <?php
+                          ";
                     }
- 
                     ?>
                 </tbody>
             </table>
